@@ -1,6 +1,7 @@
 
 
 import 'package:decimal/decimal.dart';
+import 'package:flutter/material.dart';
 
 class DurationName {
   const DurationName(this.name, this.duration);
@@ -25,7 +26,7 @@ class UzCardSms {
 
 class UzCardSmsView {
   const UzCardSmsView(this.body, this.smsDateTime, this.receiptDateTime,
-      this.summa, this.balance, this.income, this.lostSumma);
+      this.summa, this.balance, this.income, this.lostSumma, this.iconData);
 
   final String body;
   final String smsDateTime;
@@ -34,4 +35,5 @@ class UzCardSmsView {
   final String balance;
   final bool income;
   final String? lostSumma;
+  final IconData iconData;
 }

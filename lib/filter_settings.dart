@@ -21,6 +21,8 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
   RegExp expSumma = RegExp(r"summa:([0-9]+\.[0-9]{2}) UZS");
   RegExp expBalans = RegExp(r"balans:([0-9]+\.[0-9]{2}) UZS");
   RegExp expDate = RegExp(r"[0-9]{2}\.[0-9]{2}\.[0-9]{2} [0-9]{2}:[0-9]{2}");
+  RegExp exTail = RegExp(
+      r"(\s|,)[0-9]{2}\.[0-9]{2}\.[0-9]{2} [0-9]{2}:[0-9]{2}(\s|,)karta \*\*\*");
 
   var formatter = DateFormat('dd.MM.yyyy HH:mm:ss');
   var numberFormat = NumberFormat(",###,###,###,###,###.00", "en_US");
@@ -41,8 +43,8 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
   Future<Map<String, List<UzCardSmsView>>> _readMessages() async {
     var now = DateTime.now();
     var limit = now.subtract(selectedDuration.duration);
-    final Map<String, List<UzCardSms>> map = Map();
-    final Map<String, List<UzCardSmsView>> view = Map();
+    final Map<String, List<UzCardSms>> map = {};
+    final Map<String, List<UzCardSmsView>> view = {};
     bool dateLimitReached = false;
     var index = 0;
     const pageSize = 10;
@@ -95,7 +97,7 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
         var sms = UzCardSms(m.id!, m.body!, formatter.format(m.date!),
             receiptDate!, summa, balance, income, m.date!);
 
-        list?.add(sms);
+        list.add(sms);
       }
     }
 
@@ -132,8 +134,32 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
       List<UzCardSms> list = map[key]!;
       for (UzCardSms sms in list) {
         var vl = view.putIfAbsent(key, () => []);
+
+        var msg = sms.msg;
+        var matches = exTail.allMatches(sms.msg);
+        if (!matches.isEmpty) {
+          msg = msg.substring(0, matches.first.start);
+        }
+
+        IconData iconData = Icons.warning;
+        if (msg.startsWith("Popolnenie scheta:")) {
+          iconData = Icons.savings;
+        } else if (msg.startsWith("Vidacha nalichnykh v bankomate:")) {
+          iconData = Icons.payments;
+        } else if (msg.startsWith("Perevod na kartu:")) {
+          iconData = Icons.add_card;
+        } else if (msg.startsWith("Debit online:")) {
+          iconData = Icons.shopping_cart_checkout;
+        } else if (msg.startsWith("Spisanie c karty:")) {
+          iconData = Icons.credit_card;
+        } else if (msg.startsWith("Pokupka:")) {
+          iconData = Icons.shopping_cart;
+        } else if (msg.startsWith("Platezh:")) {
+          iconData = Icons.account_balance;
+        }
+
         vl.add(UzCardSmsView(
-            sms.msg!,
+            msg,
             sms.smsDateTimeFormatted,
             sms.receiptDateTime,
             formatDecimal(sms.summa.toStringAsFixed(2)),
@@ -141,7 +167,8 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
             sms.income,
             (sms.lostSumma.compareTo(Decimal.zero) == 0
                 ? null
-                : formatDecimal(sms.lostSumma.toStringAsFixed(2)))));
+                : formatDecimal(sms.lostSumma.toStringAsFixed(2))),
+            iconData));
       }
     }
     return view;
@@ -180,9 +207,9 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsets.all(50.0),
+                padding: const EdgeInsets.all(50.0),
                 child: DropdownButtonFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Считывать SMS",
                     ),
                     validator: (value) => value == null ? "Выберите" : null,
@@ -193,9 +220,9 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
                       });
                     },
                     items: durationList.map((DurationName dn) {
-                      return new DropdownMenuItem<DurationName>(
+                      return DropdownMenuItem<DurationName>(
                         value: dn,
-                        child: new Text(
+                        child: Text(
                           dn.name,
                         ),
                       );
@@ -226,10 +253,12 @@ class _FilterSettingsState extends State<FilterSettingsPage> {
 
   showAlertDialog(BuildContext context) {
     AlertDialog alert = AlertDialog(
-      content: new Row(
+      content: Row(
         children: [
-          CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 5), child: Text("Загрузка")),
+          const CircularProgressIndicator(),
+          Container(
+              margin: const EdgeInsets.only(left: 5),
+              child: const Text("Загрузка")),
         ],
       ),
     );

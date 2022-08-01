@@ -1,10 +1,63 @@
-
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 import 'dto.dart';
+
+class SMSItem extends StatelessWidget {
+  const SMSItem({super.key, required this.itemData});
+  final UzCardSmsView itemData;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: (itemData.income)
+          ? Icon(
+              itemData.iconData,
+              color: Color.fromARGB(255, 0, 128, 0),
+            )
+          : Icon(itemData.iconData),
+      title: Column(
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text("Дата чека: ${itemData.receiptDateTime}",
+                style: TextStyle(fontSize: 12)),
+            Text("Дата SMS: ${itemData.smsDateTime}",
+                style: TextStyle(fontSize: 12)),
+          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (itemData.income)
+                Text(
+                  "Сумма: ${itemData.summa}",
+                  style: TextStyle(color: Color.fromARGB(255, 0, 128, 0)),
+                )
+              else
+                Text("Сумма: ${itemData.summa}"),
+              if (itemData.income)
+                Text("Баланс: ${itemData.balance}",
+                    style: TextStyle(color: Color.fromARGB(255, 0, 128, 0)))
+              else
+                Text("Баланс: ${itemData.balance}"),
+            ],
+          ),
+        ],
+      ),
+      subtitle: Column(children: [
+        Text(itemData.body, style: TextStyle(fontSize: 12)),
+        Text(
+          "Потерянная сумма: ${itemData.lostSumma}",
+          style: TextStyle(
+              color: (itemData.lostSumma != null)
+                  ? Color.fromARGB(255, 255, 0, 0)
+                  : Color.fromARGB(0, 255, 0, 0),
+              fontSize: 12),
+        )
+      ]),
+    );
+  }
+}
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key, required this.title, required this.messages});
@@ -65,53 +118,8 @@ class _ReportPageState extends State<ReportPage>
               child: ListView(
                 children: [
                   for (var it in widget.messages[tab]!)
-                    ListTile(
-                      // leading: const ExcludeSemantics(
-                      //   child: Icon(Icons.warning),
-                      // ),
-                      title: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Дата чека: ${it.receiptDateTime}",
-                                    style: TextStyle(fontSize: 12)),
-                                Text("Дата SMS: ${it.smsDateTime}",
-                                    style: TextStyle(fontSize: 12)),
-                              ]),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              if (it.income)
-                                Text(
-                                  "Сумма: ${it.summa}",
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 0, 128, 0)),
-                                )
-                              else
-                                Text("Сумма: ${it.summa}"),
-                              if (it.income)
-                                Text(
-                                    "Баланс: ${it.balance}",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 0, 128, 0)))
-                              else
-                                Text("Баланс: ${it.balance}"),
-                            ],
-                          ),
-                        ],
-                      ),
-                      subtitle: Column(children: [
-                        Text(it.body, style: TextStyle(fontSize: 12)),
-                        if (it.lostSumma != null)
-                          Text(
-                            "Потерянная сумма: ${it.lostSumma}",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 255, 0, 0)),
-                          )
-                        else
-                          Text("", style: TextStyle(fontSize: 1))
-                      ]),
+                    SMSItem(
+                      itemData: it,
                     )
                 ],
               ),
