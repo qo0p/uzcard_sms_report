@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import 'dto.dart';
@@ -14,16 +12,16 @@ class SMSItem extends StatelessWidget {
       leading: (itemData.income)
           ? Icon(
               itemData.iconData,
-              color: Color.fromARGB(255, 0, 128, 0),
+              color: const Color.fromARGB(255, 0, 128, 0),
             )
           : Icon(itemData.iconData),
       title: Column(
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text("Дата чека: ${itemData.receiptDateTime}",
-                style: TextStyle(fontSize: 12)),
+                style: const TextStyle(fontSize: 12)),
             Text("Дата SMS: ${itemData.smsDateTime}",
-                style: TextStyle(fontSize: 12)),
+                style: const TextStyle(fontSize: 12)),
           ]),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,13 +29,13 @@ class SMSItem extends StatelessWidget {
               if (itemData.income)
                 Text(
                   "Сумма: ${itemData.summa}",
-                  style: TextStyle(color: Color.fromARGB(255, 0, 128, 0)),
+                  style: const TextStyle(color: Color.fromARGB(255, 0, 128, 0)),
                 )
               else
                 Text("Сумма: ${itemData.summa}"),
               if (itemData.income)
                 Text("Баланс: ${itemData.balance}",
-                    style: TextStyle(color: Color.fromARGB(255, 0, 128, 0)))
+                    style: const TextStyle(color: Color.fromARGB(255, 0, 128, 0)))
               else
                 Text("Баланс: ${itemData.balance}"),
             ],
@@ -45,18 +43,47 @@ class SMSItem extends StatelessWidget {
         ],
       ),
       subtitle: Column(children: [
-        Text(itemData.body, style: TextStyle(fontSize: 12)),
+        Text(itemData.body, style: const TextStyle(fontSize: 12)),
         Text(
           "Потерянная сумма: ${itemData.lostSumma}",
           style: TextStyle(
               color: (itemData.lostSumma != null)
-                  ? Color.fromARGB(255, 255, 0, 0)
-                  : Color.fromARGB(0, 255, 0, 0),
+                  ? const Color.fromARGB(255, 255, 0, 0)
+                  : const Color.fromARGB(0, 255, 0, 0),
               fontSize: 12),
         )
       ]),
     );
   }
+}
+
+class SMSList extends StatefulWidget {
+  final List<UzCardSmsView> list;
+  const SMSList({super.key, required this.list});
+
+  @override
+  State<StatefulWidget> createState() => _SMSList();
+}
+
+class _SMSList extends State<SMSList>
+    with AutomaticKeepAliveClientMixin<SMSList> {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Scrollbar(
+      child: ListView(
+        children: [
+          for (var it in widget.list)
+            SMSItem(
+              itemData: it,
+            )
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class ReportPage extends StatefulWidget {
@@ -114,16 +141,7 @@ class _ReportPageState extends State<ReportPage>
         controller: _tabController,
         children: [
           for (final tab in widget.messages.keys)
-            Scrollbar(
-              child: ListView(
-                children: [
-                  for (var it in widget.messages[tab]!)
-                    SMSItem(
-                      itemData: it,
-                    )
-                ],
-              ),
-            ),
+            SMSList(list: widget.messages[tab]!)
         ],
       ),
       // floatingActionButton: FloatingActionButton(
