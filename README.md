@@ -1,6 +1,6 @@
 # uzcard_sms_report
 
-UZCARD SMS Report
+UZCARD & HUMO SMS Report
 
 ## Getting Started
 
