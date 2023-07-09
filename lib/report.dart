@@ -4,7 +4,8 @@ import 'dto.dart';
 
 class SMSItem extends StatelessWidget {
   const SMSItem({super.key, required this.itemData});
-  final UzCardSmsView itemData;
+
+  final BankCardSmsView itemData;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,8 @@ class SMSItem extends StatelessWidget {
                 Text("Сумма: ${itemData.summa}"),
               if (itemData.income)
                 Text("Баланс: ${itemData.balance}",
-                    style: const TextStyle(color: Color.fromARGB(255, 0, 128, 0)))
+                    style:
+                        const TextStyle(color: Color.fromARGB(255, 0, 128, 0)))
               else
                 Text("Баланс: ${itemData.balance}"),
             ],
@@ -58,7 +60,8 @@ class SMSItem extends StatelessWidget {
 }
 
 class SMSList extends StatefulWidget {
-  final List<UzCardSmsView> list;
+  final List<BankCardSmsView> list;
+
   const SMSList({super.key, required this.list});
 
   @override
@@ -90,7 +93,7 @@ class ReportPage extends StatefulWidget {
   const ReportPage({super.key, required this.title, required this.messages});
 
   final String title;
-  final Map<String, List<UzCardSmsView>> messages;
+  final Map<CardID, List<BankCardSmsView>> messages;
 
   @override
   State<StatefulWidget> createState() => _ReportPageState();
@@ -131,9 +134,12 @@ class _ReportPageState extends State<ReportPage>
         title: Text(widget.title),
         bottom: TabBar(
           controller: _tabController,
-          isScrollable: widget.messages.length > 6 ? true : false,
+          isScrollable: widget.messages.length > 5 ? true : false,
           tabs: [
-            for (final tab in widget.messages.keys) Tab(text: tab),
+            for (final tab in widget.messages.keys)
+              Tab(
+                text: "${tab.type.name}\n*${tab.number}",
+              ),
           ],
         ),
       ),

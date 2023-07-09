@@ -9,9 +9,37 @@ class DurationName {
   final Duration duration;
 }
 
-class UzCardSms {
-  UzCardSms(this.id, this.msg, this.smsDateTimeFormatted, this.receiptDateTime,
-      this.summa, this.balance, this.income, this.smsDateTime);
+enum CardType {
+  UZCARD,
+  HUMO
+}
+
+class CardID {
+  final CardType type;
+  final String number;
+
+  CardID(this.type, this.number);
+
+  @override
+  String toString() {
+    return '$type-$number';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CardID &&
+          runtimeType == other.runtimeType &&
+          type == other.type &&
+          number == other.number;
+
+  @override
+  int get hashCode => type.hashCode ^ number.hashCode;
+}
+
+class BankCardSms {
+  BankCardSms(this.id, this.msg, this.smsDateTimeFormatted, this.receiptDateTime,
+      this.summa, this.balance, this.income, this.smsDateTime, this.iconData);
 
   final int id;
   final String msg;
@@ -22,10 +50,11 @@ class UzCardSms {
   final bool income;
   final DateTime smsDateTime;
   late Decimal lostSumma;
+  final IconData iconData;
 }
 
-class UzCardSmsView {
-  const UzCardSmsView(this.body, this.smsDateTime, this.receiptDateTime,
+class BankCardSmsView {
+  const BankCardSmsView(this.body, this.smsDateTime, this.receiptDateTime,
       this.summa, this.balance, this.income, this.lostSumma, this.iconData);
 
   final String body;
