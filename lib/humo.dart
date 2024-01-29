@@ -53,8 +53,8 @@ class HUMO {
         IconData iconData = Icons.warning;
         if (msg.startsWith("popolnenie")) {
           iconData = Icons.savings;
-          } else if (msg.startsWith("snjatie nalichnih")) {
-            iconData = Icons.payments;
+        } else if (msg.startsWith("snjatie nalichnih")) {
+          iconData = Icons.payments;
           // } else if (msg.startsWith("Perevod na kartu:")) {
           //   iconData = Icons.add_card;
           // } else if (msg.startsWith("Debit online:")) {
@@ -63,6 +63,10 @@ class HUMO {
           //   iconData = Icons.credit_card;
         } else if (msg.startsWith("oplata")) {
           iconData = Icons.shopping_cart;
+          // } else if (msg.startsWith("Platezh:")) {
+          //   iconData = Icons.account_balance;
+        } else if (msg.startsWith("operacija")) {
+          iconData = Icons.credit_card;
           // } else if (msg.startsWith("Platezh:")) {
           //   iconData = Icons.account_balance;
         }

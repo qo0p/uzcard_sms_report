@@ -87,6 +87,8 @@ class UZCARD {
           iconData = Icons.shopping_cart;
         } else if (msg.startsWith("Platezh:")) {
           iconData = Icons.account_balance;
+        } else if (msg.startsWith("E-Com oplata:")) {
+          iconData = Icons.shopping_basket_rounded;
         }
 
         var sms = BankCardSms(
